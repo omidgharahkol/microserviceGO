@@ -1,4 +1,4 @@
-package main
+package MessageBrocker
 
 import (
 	"encoding/json"
@@ -14,8 +14,9 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func main() {
-	var m = make(map[string]string)
+func Receive(queue string) map[string]string {
+
+	var OrderDetail = make(map[string]string)
 	conn, err := amqp.Dial("amqp://guest:guest@localhost/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -25,14 +26,18 @@ func main() {
 	defer ch.Close()
 
 	failOnError(err, "Failed to declare a queue")
-	content, con, err := ch.Get("hello", true)
+	content, con, err := ch.Get(queue, true)
 	if err != nil {
 		fmt.Println(con)
 	}
-	err1 := json.Unmarshal(content.Body, &m)
+	err1 := json.Unmarshal(content.Body, &OrderDetail)
 	if err1 != nil {
-		fmt.Println("error")
+		fmt.Println(err1)
 	}
-	fmt.Println(m["omidgharahkol"])
+	return OrderDetail
 
+}
+
+func H() string {
+	return "omid"
 }
